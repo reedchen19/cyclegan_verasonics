@@ -1,7 +1,3 @@
-Here's a cleaner, more organized version of your markdown text:
-
----
-
 # CycleGAN Verasonics
 
 This repository contains the code for the paper **"Emulating Clinical Quality Muscle B-mode Ultrasound Images from Plane-Wave Images Using a Two-Stage Machine Learning Model"**. The code covers model training in Python and Verasonics implementation in MATLAB.
@@ -37,13 +33,12 @@ To implement the models on the **Verasonics Vantage** system, which uses a MATLA
      - **Stage 1**: A network for the first stage only,
      - **Stage 2**: A network for the second stage only,
      - **Combined**: A two-stage network connecting the output of stage 1 to the input of stage 2.
-   - > **Note**: Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
+
+- > **Note**: Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
 
 ---
 
-### Incorporating the Model into Verasonics Acquisition Sequences
-
-To integrate the model into Verasonics acquisition sequences:
+### Integrating the Model into Verasonics Acquisition Sequences
 
 1. **Creation of a Verasonics External Process object**:
    - This object reads **plane-wave intensity data** from the `ImageBuffer`.
