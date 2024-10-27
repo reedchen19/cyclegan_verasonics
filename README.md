@@ -14,7 +14,7 @@ This repository contains the code for the paper **"Emulating Clinical Quality Mu
 
 ### Verasonics Implementation
 
-To implement the models on the **Verasonics Vantage** system, which uses a MATLAB interface, models trained in **Python 3.7** with **TensorFlow 2.9.1** were imported into **MATLAB R2019a**. Due to compatibility and import challenges, several steps were taken:
+To implement the models on the Verasonics Vantage system, which uses a MATLAB interface, models trained in **Python 3.7** with **TensorFlow 2.9.1** were imported into **MATLAB R2019a**. Due to compatibility and import challenges, several steps were taken:
 
 1. **Model Format Conversion**:
    - **MATLAB R2019a** includes the `importKerasLayers` method for importing Keras HDF5 models. However, the method did not support several TensorFlow layers.
@@ -42,7 +42,7 @@ To implement the models on the **Verasonics Vantage** system, which uses a MATLA
    
 2. The External Process object calls a MATLAB function that:
     - Loads the DAGNetwork as a persistent variable,
-    - Resizes the intensity data to **512x512** and passes the data through the DAGNetwork.
+    - Resizes the intensity data to 512x512 and passes the data through the DAGNetwork.
     - Displays the enhanced output image on a persistent MATLAB figure, allowing for real-time image enhancement on the Verasonics system.
 
 --- 
