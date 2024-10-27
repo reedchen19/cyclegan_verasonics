@@ -18,15 +18,13 @@ To implement the models on the **Verasonics Vantage** system, which uses a MATLA
 
 1. **Model Format Conversion**:
    - **MATLAB R2019a** includes the `importKerasLayers` method for importing Keras HDF5 models. However, the method did not support several TensorFlow layers.
-   - To overcome this, models were:
-     - First saved in the **SavedModel** format with TensorFlow,
-     - Converted to **ONNX** format using `tf2onnx` and ONNX opset-9.
+   - To overcome this, models were first saved in the **SavedModel** format with TensorFlow, then converted to **ONNX** format using `tf2onnx` and ONNX opset-9.
 
 2. **ONNX Model Import to MATLAB**:
    - ONNX models were imported into MATLAB using MATLAB’s `importONNXLayers` function. 
-   - **Layer Adjustments**:
+   - Due to differences between TensorFlow and MATLAB's layer implementations, additional corrections were made:
      - **Conv2DTranspose Layer**: TensorFlow’s `Conv2DTranspose` layer pads the input, whereas MATLAB’s implementation of the transposed convolution layer crops the output. To address this difference, the `Conv2DTranspose` layers were replaced with MATLAB’s implementation while preserving the original kernel weights.
-     - **Reshape Layer Correction**: ONNX models expect image data in `[size, channels, size]` format, whereas TensorFlow and MATLAB expect `[size, size, channels]`. As a result, `importONNXLayers` added incorrect reshape layers after the input layer and before the output layer. These reshape layers were removed, and a correctly formatted input layer (`[size, size, channels]`) and an output regression layer were added.
+     - **Reshape Layer**: ONNX models expect image data in `[size, channels, size]` format, whereas TensorFlow and MATLAB expect `[size, size, channels]`. As a result, `importONNXLayers` added incorrect reshape layers after the input layer and before the output layer. These reshape layers were removed, and a correctly formatted input layer (`[size, size, channels]`) and an output regression layer were added.
 
 3. **Assembly of MATLAB DAGNetworks**:
    - Due to the two-stage nature of the model, three DAGNetworks were created:
@@ -34,21 +32,18 @@ To implement the models on the **Verasonics Vantage** system, which uses a MATLA
      - **Stage 2**: A network for the second stage only,
      - **Combined**: A two-stage network connecting the output of stage 1 to the input of stage 2.
 
-- > **Note**: Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
+> **Note**: Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
 
 ---
 
 ### Integrating the Model into Verasonics Acquisition Sequences
 
-1. **Creation of a Verasonics External Process object**:
-   - This object reads **plane-wave intensity data** from the `ImageBuffer`.
+1. A **Verasonics External Process object** was created that reads **plane-wave intensity data** from the `ImageBuffer`.
    
-2. **Processing Workflow**:
-   - The External Process object calls a MATLAB function that:
-     - Loads the DAGNetwork as a persistent variable,
-     - Resizes intensity data to **512x512**,
-     - Passes the data through the DAGNetwork.
-   - The enhanced output image is then displayed on a persistent MATLAB figure, allowing for real-time image enhancement on the Verasonics system.
+2. The External Process object calls a MATLAB function that:
+    - Loads the DAGNetwork as a persistent variable,
+    - Resizes the intensity data to **512x512** and passes the data through the DAGNetwork.
+    - The enhanced output image is then displayed on a persistent MATLAB figure, allowing for real-time image enhancement on the Verasonics system.
 
 --- 
 
