@@ -43,7 +43,7 @@ To implement the models on the **Verasonics Vantage** system, which uses a MATLA
 2. The External Process object calls a MATLAB function that:
     - Loads the DAGNetwork as a persistent variable,
     - Resizes the intensity data to **512x512** and passes the data through the DAGNetwork.
-    - The enhanced output image is then displayed on a persistent MATLAB figure, allowing for real-time image enhancement on the Verasonics system.
+    - Displays the enhanced output image on a persistent MATLAB figure, allowing for real-time image enhancement on the Verasonics system.
 
 --- 
 
