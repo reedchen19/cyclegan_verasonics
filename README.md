@@ -2,6 +2,8 @@
 
 This repository contains the code for the paper **"Emulating Clinical Quality Muscle B-mode Ultrasound Images from Plane-Wave Images Using a Two-Stage Machine Learning Model"**. The code covers model training in Python and Verasonics implementation in MATLAB.
 
+![plane wave image processing with ML](figure7.png)
+
 ## Repository Structure
 
 - **`unet/`** and **`cyclegan/`**: These folders contain:
