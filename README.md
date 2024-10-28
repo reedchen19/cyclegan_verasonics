@@ -5,7 +5,7 @@ This repository contains the code for the paper **"Emulating Clinical Quality Mu
 ## Repository Structure
 
 - **`unet/`** and **`cyclegan/`**: These folders contain:
-  - Datasets, models, trainers, and weights for the two-stage model: U-Net (stage 1) and CycleGAN (stage 2).
+  - Datasets, models, trainers, and weights for the two-stage model: U-Net (stage 1) and CycleGAN (stage 2). Note that the U-Net and CycleGAN share the same model.
 - **`verasonics/`**: This folder includes:
   - Code for converting U-Net and CycleGAN models from ONNX to MATLAB DAGNetworks.
   - Code to incorporate these DAGNetworks into Verasonics External Process objects, enabling real-time image enhancement on the Verasonics system.
