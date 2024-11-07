@@ -20,7 +20,9 @@ To implement the models on the Verasonics Vantage system, which uses a MATLAB in
 
 1. **Model Format Conversion**:
    - **MATLAB R2019a** includes the `importKerasLayers` method for importing Keras HDF5 models. However, the method did not support several TensorFlow layers.
-   - To overcome this, models were first saved in the **SavedModel** format with TensorFlow, then converted to **ONNX** format using `tf2onnx` and ONNX opset-9.
+   - To overcome this, models were first saved in the **SavedModel** format with TensorFlow, then converted to **ONNX** format using `tf2onnx` and ONNX opset-9. The U-Net and CycleGAN models in ONNX format are saved at:
+      - `verasonics/tensorflow_to_matlab/unet_113.onnx`
+      - `verasonics/tensorflow_to_matlab/cyclegan.onnx`
 
 2. **ONNX Model Import to MATLAB**:
    - ONNX models were imported into MATLAB using MATLAB’s `importONNXLayers` function. 
@@ -33,6 +35,14 @@ To implement the models on the Verasonics Vantage system, which uses a MATLAB in
      - **Stage 1**: A network for the first stage only,
      - **Stage 2**: A network for the second stage only,
      - **Combined**: A two-stage network connecting the output of stage 1 to the input of stage 2.
+   - Matlab code used to import the ONNX models into MATLAB and assemble the DAGNetworks are located at:
+     - `verasonics/tensorflow_to_matlab/import_unet.m`
+     - `verasonics/tensorflow_to_matlab/import_cyclegan.m`
+     - `verasonics/tensorflow_to_matlab/make_combined_model.m`
+   - The corresponding DAGNetworks are saved at:
+     - `verasonics/external_process/custom_onnx_unet113.mat`
+     - `verasonics/external_process/custom_onnx_cyclegan.mat`
+     - `verasonics/external_process/combined_model.mat`
 
 > **Note**: Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
 
@@ -46,6 +56,10 @@ To implement the models on the Verasonics Vantage system, which uses a MATLAB in
     - Loads the DAGNetwork as a persistent variable,
     - Resizes the intensity data to 512x512 and passes the data through the DAGNetwork.
     - Displays the enhanced output image on a persistent MATLAB figure, allowing for real-time image enhancement on the Verasonics system.
+   
+   These MATLAB functions called by the External Process object are located at:
+    - `verasonics/external_process/ml_filter_verasonics.m` displays only the output of the combined model
+    - `verasonics/external_process/ml_filter_verasonics_separate_stages.m` displays the input image, the output of the first stage U-Net, and the output of the second stage CycleGAN
 
 --- 
 
