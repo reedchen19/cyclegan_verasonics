@@ -1,10 +1,24 @@
 import tensorflow as tf
-#import tensorflow_addons as tfa
+import tensorflow_addons as tfa
 
 
 class ModelBase:
     def __init__(self, kernel_size=3, gen_filters=None, disc_filters=None, deep_ds=True, deep_us=True, pair_disc=False,
                  gen_norm=None, disc_norm=None, dropout=None):
+        """
+        Initializes the ModelBase class with the given parameters.
+
+        Args:
+            kernel_size: Size of the convolutional kernels.
+            gen_filters: List of filter sizes for the generator.
+            disc_filters: List of filter sizes for the discriminator.
+            deep_ds: Whether to use deep downsampling.
+            deep_us: Whether to use deep upsampling.
+            pair_disc: Whether to use paired discriminator.
+            gen_norm: Normalization type for the generator.
+            disc_norm: Normalization type for the discriminator.
+            dropout: Dropout rate.
+        """
         if gen_filters is None:
             gen_filters = [16, 16, 16, 16, 16]
         if disc_filters is None:
@@ -29,19 +43,37 @@ class ModelBase:
         self.dropout = dropout
 
     def norm_layer(self, norm):
-        if norm=='instance_norm':
+        """
+        Returns the normalization layer based on the given normalization type.
+
+        Args:
+            norm: Normalization type ('instance_norm' or 'batch_norm').
+
+        Returns:
+            Normalization layer.
+        """
+        if norm == 'instance_norm':
             return tfa.layers.InstanceNormalization(axis=-1, center=True, scale=True,
-                                     beta_initializer='random_uniform',
-                                     gamma_initializer='random_uniform')
-        if norm=='batch_norm':
+                                                    beta_initializer='random_uniform',
+                                                    gamma_initializer='random_uniform')
+        if norm == 'batch_norm':
             return tf.keras.layers.BatchNormalization()
 
 
 class Generator(ModelBase):
     def __init__(self, **kwargs):
+        """
+        Initializes the Generator class with the given parameters.
+        """
         super().__init__(**kwargs)
 
     def __call__(self):
+        """
+        Builds the generator model.
+
+        Returns:
+            Generator model.
+        """
         inputs = tf.keras.layers.Input(shape=[self.TARGET_HEIGHT, self.TARGET_WIDTH, 1])
         x = inputs
 
@@ -92,16 +124,25 @@ class Generator(ModelBase):
                 if self.dropout is not None:
                     x = tf.keras.layers.Dropout(self.dropout)(x)
 
-        x = tf.keras.layers.Conv2D(1, 1, strides=1, padding='same')(x)  # MimickNet does not not use tanh
+        x = tf.keras.layers.Conv2D(1, 1, strides=1, padding='same')(x)  # MimickNet does not use tanh
 
         return tf.keras.Model(inputs=inputs, outputs=x)
 
 
 class Discriminator(ModelBase):
     def __init__(self, **kwargs):
+        """
+        Initializes the Discriminator class with the given parameters.
+        """
         super().__init__(**kwargs)
 
     def __call__(self):
+        """
+        Builds the discriminator model.
+
+        Returns:
+            Discriminator model.
+        """
         if self.pair_disc:
             inp = tf.keras.layers.Input(shape=[self.TARGET_HEIGHT, self.TARGET_WIDTH, 1], name='input_image')
             tar = tf.keras.layers.Input(shape=[self.TARGET_HEIGHT, self.TARGET_WIDTH, 1], name='target_image')

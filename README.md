@@ -20,9 +20,9 @@ To implement the models on the Verasonics Vantage system, which uses a MATLAB in
 
 1. **Model Format Conversion**:
    - **MATLAB R2019a** includes the `importKerasLayers` method for importing Keras HDF5 models. However, the method did not support several TensorFlow layers.
-   - To overcome this, models were first saved in the **SavedModel** format with TensorFlow, then converted to **ONNX** format using `tf2onnx` and ONNX opset-9. The U-Net and CycleGAN models in ONNX format are saved at:
-      - `verasonics/tensorflow_to_matlab/unet_113.onnx`
-      - `verasonics/tensorflow_to_matlab/cyclegan.onnx`
+   - To overcome this, models were first saved in the **SavedModel** format with TensorFlow, then converted to **ONNX** format using `tf2onnx` and ONNX opset-9. 
+      - `python -m tf2onnx.convert --saved-model ./unet/unet_113_savedwith37/ --opset 9 --output ./verasonics/tensorflow_to_matlab/unet_113.onnx`
+      - `python -m tf2onnx.convert --saved-model ./cyclegan/long_01_ckpt-122/ --opset 9 --output ./verasonics/tensorflow_to_matlab/cyclegan.onnx`
 
 2. **ONNX Model Import to MATLAB**:
    - ONNX models were imported into MATLAB using MATLAB’s `importONNXLayers` function. 

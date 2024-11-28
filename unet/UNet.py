@@ -13,6 +13,18 @@ from DatasetPW import DatasetPW
 
 class UNet:
     def __init__(self, model, batch_size, epochs, filepath, checkpoint=None, train_steps=None, val_steps=None):
+        """
+        Initializes the UNet class with the given parameters.
+
+        Args:
+            model: The generator model.
+            batch_size: Batch size for training.
+            epochs: Number of epochs for training.
+            filepath: Path to save checkpoints and logs.
+            checkpoint: Optional checkpoint to restore the model.
+            train_steps: Number of training steps per epoch.
+            val_steps: Number of validation steps per epoch.
+        """
         self.batch_size = batch_size
         self.epochs = epochs
         self.filepath = filepath
@@ -41,16 +53,50 @@ class UNet:
             print('********** Restored Checkpoint **********')
 
     def generator_loss(self, gen_output, target):
+        """
+        Calculates the generator loss.
+
+        Args:
+            gen_output: Generated images.
+            target: Target images.
+
+        Returns:
+            Loss value.
+        """
         l1_loss = tf.reduce_mean(tf.abs(target - gen_output))
         return l1_loss
 
     def colorbar(self, img, fig, ax):
+        """
+        Adds a colorbar to the plot.
+
+        Args:
+            img: Image to add colorbar for.
+            fig: Figure object.
+            ax: Axes object.
+
+        Returns:
+            Colorbar object.
+        """
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         cbar = fig.colorbar(img, cax=cax)
         return cbar
 
     def val_test(self, input_image, target, plot=True, number=None, epoch=None):
+        """
+        Performs validation testing.
+
+        Args:
+            input_image: Input images.
+            target: Target images.
+            plot: Whether to plot the results.
+            number: Optional number for saving the plot.
+            epoch: Optional epoch number for saving the plot.
+
+        Returns:
+            Dictionary of average generator L1 loss, SSIM before and after, and MSE before and after.
+        """
         gen_output = self.generator(input_image, training=False)
 
         gen_l1_loss = self.generator_loss(gen_output, target)
@@ -89,6 +135,15 @@ class UNet:
 
     @tf.function
     def train_step(self, input_image, target, step, summary_writer):
+        """
+        Performs a single training step.
+
+        Args:
+            input_image: Input images.
+            target: Target images.
+            step: Current training step.
+            summary_writer: Summary writer for TensorBoard.
+        """
         with tf.GradientTape() as gen_tape:
             gen_output = self.generator(input_image, training=True)
             gen_l1_loss = self.generator_loss(gen_output, target)
@@ -103,6 +158,13 @@ class UNet:
             tf.summary.scalar('gen l1_loss', gen_l1_loss, step=step)
 
     def validate(self, epoch, summary_writer):
+        """
+        Validates the model.
+
+        Args:
+            epoch: Current epoch number.
+            summary_writer: Summary writer for TensorBoard.
+        """
         total_metrics = np.zeros(5)
         val_ds_iter = iter(self.val_ds)
 
@@ -126,12 +188,28 @@ class UNet:
                 tf.summary.scalar(metric_keys[i], total_metrics[i] / self.val_steps, step=epoch)
 
     def test(self, input_image, target):
+        """
+        Tests the model on a single input image.
+
+        Args:
+            input_image: Input image to test.
+            target: Target image.
+
+        Returns:
+            Prints the metrics averaged over the batch size.
+        """
         metrics = self.val_test(input_image, target)
         print(f'Metrics averaged over {self.batch_size} images')
         for key, value in metrics.items():
             print(f'{key}: {value}')
 
     def fit(self, restore_filepath=None):
+        """
+        Trains the model.
+
+        Args:
+            restore_filepath: Optional filepath to restore the latest checkpoint.
+        """
         checkpoint_dir = self.filepath + '/checkpoints/'
         if not os.path.exists(checkpoint_dir):
             os.makedirs(checkpoint_dir)

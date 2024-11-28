@@ -14,6 +14,25 @@ from DatasetCycle import DatasetCycle
 class CycleGAN:
     def __init__(self, generator_g, generator_f, discriminator_x, discriminator_y, batch_size, epochs, filepath, checkpoint=None, train_steps=None,
                  val_steps=None, LAMBDA_g=.001, LAMBDA_f=.01, lr_bounds=None, lr_values=None):
+        """
+        Initializes the CycleGAN model with the given parameters.
+
+        Args:
+            generator_g: Generator model for translating X -> Y.
+            generator_f: Generator model for translating Y -> X.
+            discriminator_x: Discriminator model for domain X.
+            discriminator_y: Discriminator model for domain Y.
+            batch_size: Batch size for training.
+            epochs: Number of epochs for training.
+            filepath: Path to save checkpoints and logs.
+            checkpoint: Optional checkpoint to restore the model.
+            train_steps: Number of training steps per epoch.
+            val_steps: Number of validation steps per epoch.
+            LAMBDA_g: Weight for generator G loss.
+            LAMBDA_f: Weight for generator F loss.
+            lr_bounds: Learning rate boundaries for piecewise constant decay.
+            lr_values: Learning rate values for piecewise constant decay.
+        """
         self.batch_size = batch_size
         self.epochs = epochs
         self.filepath = filepath
@@ -71,23 +90,73 @@ class CycleGAN:
             self.checkpoint.restore(checkpoint)
 
     def generator_loss(self, generated):
+        """
+        Calculates the generator loss.
+
+        Args:
+            generated: Discriminator output.
+
+        Returns:
+            Loss value.
+        """
         return self.loss_object(tf.ones_like(generated), generated)
 
     def calc_cycle_loss(self, real_image, cycled_image):
+        """
+        Calculates the cycle consistency loss.
+
+        Args:
+            real_image: Real images.
+            cycled_image: Cycled images.
+
+        Returns:
+            Loss value.
+        """
         loss = tf.reduce_mean(tf.abs(real_image - cycled_image))
         return loss
 
     def identity_loss(self, real_image, same_image):
+        """
+        Calculates the identity loss.
+
+        Args:
+            real_image: Real images.
+            same_image: Generator output.
+
+        Returns:
+            Loss value.
+        """
         loss = tf.reduce_mean(tf.abs(real_image - same_image))
         return loss
 
     def discriminator_loss(self, disc_real_output, disc_generated_output):
+        """
+        Calculates the discriminator loss.
+
+        Args:
+            disc_real_output: Discriminator output for real images.
+            disc_generated_output: Discriminator output for generated images.
+
+        Returns:
+            Tuple of total loss, real loss, and generated loss.
+        """
         real_loss = self.loss_object(tf.ones_like(disc_real_output), disc_real_output)
         generated_loss = self.loss_object(tf.zeros_like(disc_generated_output), disc_generated_output)
         disc_total_loss = (real_loss + generated_loss) / 2
         return disc_total_loss, real_loss, generated_loss
 
     def colorbar(self, img, fig, ax):
+        """
+        Adds a colorbar to the plot.
+
+        Args:
+            img: Image to add colorbar for.
+            fig: Figure object.
+            ax: Axes object.
+
+        Returns:
+            Colorbar object.
+        """
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         cbar = fig.colorbar(img, cax=cax)
@@ -95,6 +164,15 @@ class CycleGAN:
 
     @tf.function
     def train_step(self, real_x, real_y, step, summary_writer):
+        """
+        Performs a single training step.
+
+        Args:
+            real_x: Real images from domain X.
+            real_y: Real images from domain Y.
+            step: Current training step.
+            summary_writer: Summary writer for TensorBoard.
+        """
         with tf.GradientTape(persistent=True) as tape:
             # Generator G translates X -> Y
             # Generator F translates Y -> X.
@@ -178,6 +256,19 @@ class CycleGAN:
                 tf.summary.scalar(key, value, step=step)
 
     def val_test(self, input_x, input_y, plot=True, number=None, epoch=None):
+        """
+        Performs validation testing.
+
+        Args:
+            input_x: Input images from domain X.
+            input_y: Input images from domain Y.
+            plot: Whether to plot the results.
+            number: Optional number for saving the plot.
+            epoch: Optional epoch number for saving the plot.
+
+        Returns:
+            Dictionary of average generator G loss.
+        """
         fake_y = self.generator_g(input_x, training=False)
         disc_fake_y = self.discriminator_y(fake_y, training=False)
         cycle_x = self.generator_f(fake_y, training=False)
@@ -229,6 +320,13 @@ class CycleGAN:
         return metrics
 
     def validate(self, epoch, summary_writer):
+        """
+        Validates the model.
+
+        Args:
+            epoch: Current epoch number.
+            summary_writer: Summary writer for TensorBoard.
+        """
         total_metrics = np.zeros(1)
         val_x_iter = iter(self.val_x_ds)
         val_y_iter = iter(self.val_y_ds)
@@ -260,12 +358,27 @@ class CycleGAN:
                 tf.summary.scalar(metric_keys[i], total_metrics[i] / self.val_steps, step=epoch)
 
     def test(self, input_image):
+        """
+        Tests the model on a single input image.
+
+        Args:
+            input_image: Input image to test.
+
+        Returns:
+            Prints the metrics averaged over the batch size.
+        """
         metrics = self.val_test(input_image)
         print(f'Metrics averaged over {self.batch_size} images')
         for key, value in metrics.items():
             print(f'{key}: {value}')
 
     def fit(self, restore_filepath=None):
+        """
+        Trains the model.
+
+        Args:
+            restore_filepath: Optional filepath to restore the latest checkpoint.
+        """
         checkpoint_dir = self.filepath + '/checkpoints/'
         if not os.path.exists(checkpoint_dir):
             os.makedirs(checkpoint_dir)

@@ -4,6 +4,12 @@ import pandas as pd
 
 class DatasetPW:
     def __init__(self, batch_size=1):
+        """
+        Initializes the DatasetPW class with the given batch size.
+
+        Args:
+            batch_size: Batch size for the dataset.
+        """
         self.TARGET_HEIGHT = 512
         self.TARGET_WIDTH = 512
         self.CROP_HEIGHT = 448
@@ -11,6 +17,7 @@ class DatasetPW:
 
         self.BATCH_SIZE = batch_size
 
+        # Load training, validation, and test datasets
         train_df = pd.read_csv('./clean_PW_muscle_data/train_dataset.csv')
         train_df.head()
         train_images = train_df['original'].tolist()
@@ -26,12 +33,7 @@ class DatasetPW:
         test_images = test_df['original'].tolist()
         test_labels = test_df['filtered'].tolist()
 
-#         train_size = 2
-#         tv_size = 1
-#         train_ds = tf.data.Dataset.from_tensor_slices((train_images[0:train_size], train_labels[0:train_size]))
-#         val_ds = tf.data.Dataset.from_tensor_slices((val_images[0:tv_size], val_labels[0:tv_size]))
-#         test_ds = tf.data.Dataset.from_tensor_slices((test_images[0:tv_size], test_labels[0:tv_size]))
-
+        # Create TensorFlow datasets
         train_ds = tf.data.Dataset.from_tensor_slices((train_images, train_labels))
         val_ds = tf.data.Dataset.from_tensor_slices((val_images, val_labels))
         test_ds = tf.data.Dataset.from_tensor_slices((test_images, test_labels))
@@ -60,6 +62,16 @@ class DatasetPW:
         self.test_ds = test_ds.batch(self.BATCH_SIZE)
 
     def load(self, image_file, label_file):
+        """
+        Loads and decodes an image and its corresponding label.
+
+        Args:
+            image_file: File path of the input image.
+            label_file: File path of the label image.
+
+        Returns:
+            Tuple of the input image and label image tensors.
+        """
         image = tf.io.read_file(image_file)
         image = tf.io.decode_png(image)
 
@@ -73,38 +85,94 @@ class DatasetPW:
         return image, label
 
     def random_crop(self, input_image, real_image):
+        """
+        Randomly crops the input and label images.
+
+        Args:
+            input_image: Input image tensor.
+            real_image: Label image tensor.
+
+        Returns:
+            Tuple of cropped input and label images.
+        """
         stacked_image = tf.stack([input_image, real_image], axis=0)
         cropped_image = tf.image.random_crop(stacked_image, size=[2, self.CROP_HEIGHT, self.CROP_WIDTH, 1])
 
         return cropped_image[0], cropped_image[1]
 
     def resize(self, input_image, real_image):
+        """
+        Resizes the input and label images to the target dimensions.
+
+        Args:
+            input_image: Input image tensor.
+            real_image: Label image tensor.
+
+        Returns:
+            Tuple of resized input and label images.
+        """
         input_image = tf.image.resize(input_image, [self.TARGET_HEIGHT, self.TARGET_WIDTH])
         real_image = tf.image.resize(real_image, [self.TARGET_HEIGHT, self.TARGET_WIDTH])
         return input_image, real_image
 
     def random_flip(self, input_image, real_image):
+        """
+        Randomly flips the input and label images horizontally.
+
+        Args:
+            input_image: Input image tensor.
+            real_image: Label image tensor.
+
+        Returns:
+            Tuple of flipped input and label images.
+        """
         if tf.random.uniform(()) > 0.5:
             input_image = tf.image.flip_left_right(input_image)
             real_image = tf.image.flip_left_right(real_image)
         return input_image, real_image
 
     def normalize(self, input_image, real_image):
-#         input_image = input_image - tf.math.reduce_min(input_image)
-#         input_image = (input_image / tf.math.reduce_max(input_image)) * 2 - 1
-#         real_image = real_image - tf.math.reduce_min(real_image)
-#         real_image = (real_image / tf.math.reduce_max(real_image)) * 2 - 1
-        input_image = input_image/127.5 - 1
-        real_image = real_image/127.5 - 1
+        """
+        Normalizes the input and label images to the range [-1, 1].
+
+        Args:
+            input_image: Input image tensor.
+            real_image: Label image tensor.
+
+        Returns:
+            Tuple of normalized input and label images.
+        """
+        input_image = input_image / 127.5 - 1
+        real_image = real_image / 127.5 - 1
 
         return input_image, real_image
 
     def augment(self, input_image, real_image):
+        """
+        Applies data augmentation to the input and label images.
+
+        Args:
+            input_image: Input image tensor.
+            real_image: Label image tensor.
+
+        Returns:
+            Tuple of augmented input and label images.
+        """
         input_image, real_image = self.random_crop(input_image, real_image)
         input_image, real_image = self.random_flip(input_image, real_image)
         return input_image, real_image
 
     def load_image_train(self, original, label):
+        """
+        Loads and preprocesses an image and its label for training.
+
+        Args:
+            original: File path of the input image.
+            label: File path of the label image.
+
+        Returns:
+            Tuple of preprocessed input and label images.
+        """
         input_image, real_image = self.load(original, label)
         input_image, real_image = self.resize(input_image, real_image)
         input_image, real_image = self.augment(input_image, real_image)
@@ -114,6 +182,16 @@ class DatasetPW:
         return input_image, real_image
 
     def load_image_val_test(self, original, label):
+        """
+        Loads and preprocesses an image and its label for validation or testing.
+
+        Args:
+            original: File path of the input image.
+            label: File path of the label image.
+
+        Returns:
+            Tuple of preprocessed input and label images.
+        """
         input_image, real_image = self.load(original, label)
         input_image, real_image = self.resize(input_image, real_image)
         input_image, real_image = self.normalize(input_image, real_image)
