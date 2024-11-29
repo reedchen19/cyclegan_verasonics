@@ -12,6 +12,7 @@ jobs:
         with:
           release: R2023b
       - name: Run script
+        working-directory: ./verasonics/tensorflow_to_matlab
         uses: matlab-actions/run-command@v2
         with:
-          command: verasonics/tensorflow_to_matlab/import_unet
+          command: import_unet
