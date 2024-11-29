@@ -13,6 +13,7 @@ jobs:
           release: R2023b
           products: >
             Deep_Learning_Toolbox
+            Deep_Learning_Toolbox_Converter
       - name: Run script
         uses: matlab-actions/run-command@v2
         with:
