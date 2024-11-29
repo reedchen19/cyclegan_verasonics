@@ -1,6 +1,6 @@
 clear
 % Import the ONNX model
-onnx_layers = importONNXLayers('./cyclegan.onnx', 'ImportWeights', 1);
+onnx_layers = importONNXLayers('cyclegan.onnx', 'ImportWeights', 1);
 
 % Plot the imported ONNX layers
 plot(onnx_layers)

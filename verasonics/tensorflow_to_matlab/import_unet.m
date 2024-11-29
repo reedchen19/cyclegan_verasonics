@@ -1,12 +1,12 @@
 % Import the ONNX model
-onnx_layers = importONNXLayers('./unet_113.onnx', 'ImportWeights', 1)
+onnx_layers = importONNXLayers('unet_113.onnx', 'ImportWeights', 1)
 
 % Plot the imported ONNX layers
 plot(onnx_layers)
 findPlaceholderLayers(onnx_layers)
 
 % Import the Keras model
-keras_layers = importKerasLayers('./unet_113.h5')
+keras_layers = importKerasLayers('unet_113.h5')
 
 % Customize the imported ONNX model
 custom_onnx2 = onnx_layers

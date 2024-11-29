@@ -1,6 +1,6 @@
 clear
 % Import the U-Net ONNX model
-onnx_layers = importONNXLayers('./unet_113.onnx', 'ImportWeights', 1);
+onnx_layers = importONNXLayers('unet_113.onnx', 'ImportWeights', 1);
 
 % Customize the imported U-Net ONNX model
 custom_unet_lg = onnx_layers;
@@ -26,7 +26,7 @@ plot(custom_unet_lg)
 
 %% add cyclegan
 % Import the CycleGAN ONNX model
-onnx_layers = importONNXLayers('./cyclegan.onnx', 'ImportWeights', 1);
+onnx_layers = importONNXLayers('cyclegan.onnx', 'ImportWeights', 1);
 
 % Customize the imported CycleGAN ONNX model
 custom_cyclegan_lg = onnx_layers;
