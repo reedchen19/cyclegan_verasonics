@@ -11,6 +11,8 @@ jobs:
         uses: matlab-actions/setup-matlab@v2
         with:
           release: R2023b
+          products: >
+            Deep Learning Toolbox
       - name: Run script
         uses: matlab-actions/run-command@v2
         with:
