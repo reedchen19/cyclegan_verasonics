@@ -13,7 +13,7 @@ jobs:
           release: R2023b
           products: >
             Deep_Learning_Toolbox
-            Deep_Learning_Toolbox_Converter
+            Deep_Learning_Toolbox_Converter_for_ONNX_Model_Format
       - name: Run script
         uses: matlab-actions/run-command@v2
         with:
