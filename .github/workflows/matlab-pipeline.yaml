@@ -10,10 +10,11 @@ jobs:
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
         with:
-          release: R2023b
+          release: R2019a
           products: >
             Deep_Learning_Toolbox
             Deep_Learning_Toolbox_Converter_for_ONNX_Model_Format
+            Deep_Learning_Toolbox_Converter_for_TensorFlow_Models
       - name: Run script
         uses: matlab-actions/run-command@v2
         with:
