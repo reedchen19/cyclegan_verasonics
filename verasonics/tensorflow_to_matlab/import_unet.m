@@ -5,15 +5,13 @@ onnx_layers = importONNXLayers('unet_113.onnx', 'ImportWeights', 1)
 plot(onnx_layers)
 findPlaceholderLayers(onnx_layers)
 
-% Import the Keras model
-keras_layers = importKerasLayers('unet_113.h5')
-
 % Customize the imported ONNX model
 custom_onnx2 = onnx_layers
 custom_onnx2 = removeLayers(custom_onnx2, 'StatefulPartitionedCall|model|conv2d|BiasAdd__6')
 custom_onnx2 = removeLayers(custom_onnx2, 'StatefulPartitionedCall|model|conv2d_18|BiasAdd__140')
-custom_onnx2 = replaceLayer(custom_onnx2, 'Input_input_1', [keras_layers.Layers(1)])
-custom_onnx2 = connectLayers(custom_onnx2, 'input_1', 'StatefulPartitionedCall|model|conv2d|BiasAdd')
+input_layer = imageInputLayer([512 512 1], 'Name',  'input', 'DataAugmentation', 'none', 'Normalization', 'none', 'AverageImage', [])
+custom_onnx2 = replaceLayer(custom_onnx2, 'Input_input_1', [input_layer])
+custom_onnx2 = connectLayers(custom_onnx2, 'input', 'StatefulPartitionedCall|model|conv2d|BiasAdd')
 
 % Replace transposed convolution layers with MATLAB's implementation
 tp0 = transposedConv2dLayer([3,3], 16, 'NumChannels', 16, 'Stride', [2,2], 'Cropping', 'same', 'Weights', onnx_layers.Layers(27).Weights, 'Bias', onnx_layers.Layers(27).Bias, 'name', 'tp0')
