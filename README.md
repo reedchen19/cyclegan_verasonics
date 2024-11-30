@@ -16,7 +16,7 @@ This repository contains the code for the paper **"Emulating Clinical Quality Mu
 
 ### Verasonics Implementation
 
-To implement the models on the Verasonics Vantage system, which uses a MATLAB interface, models trained in **Python 3.7** with **TensorFlow 2.9.1** were imported into **MATLAB R2019a**. Due to compatibility and import challenges, several steps were taken:
+To implement the models on the Verasonics Vantage system, which uses a MATLAB interface, models trained in **Python 3.7** with **TensorFlow 2.9.1** were imported into **MATLAB R2019a** with the **Deep Learning Toolbox** and **Deep Learning Toolbox Converter for ONNX Model Format**. Due to compatibility and import challenges, several steps were taken:
 
 1. **Model Format Conversion**:
    - **MATLAB R2019a** includes the `importKerasLayers` method for importing Keras HDF5 models. However, the method did not support several TensorFlow layers.
@@ -43,8 +43,9 @@ To implement the models on the Verasonics Vantage system, which uses a MATLAB in
      - `verasonics/external_process/custom_onnx_unet113.mat`
      - `verasonics/external_process/custom_onnx_cyclegan.mat`
      - `verasonics/external_process/combined_model.mat`
+   - `verasonics/external_process/test_DAGNetwork.m` can be used to load and test the saved DAGNetworks.
 
-> **Note**: Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
+> **Note**: This code was successfully tested on MATLAB R2019a and R2019b. The code fails on MATLAB R2020b and later due to changes to the Deep Learning Toolbox. Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
 
 ---
 
