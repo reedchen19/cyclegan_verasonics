@@ -1,4 +1,3 @@
-clear
 % Import the U-Net ONNX model
 onnx_layers = importONNXLayers('unet_113.onnx', 'ImportWeights', 1);
 
@@ -82,3 +81,5 @@ plot(combined_lg)
 % Assemble the combined model
 combined_model = assembleNetwork(combined_lg);
 
+% Save the final customized ONNX model
+save('../external_process/2019_DAGNetworks/combined_model.mat', "combined_model");

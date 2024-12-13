@@ -31,6 +31,13 @@ custom_onnx2 = connectLayers(custom_onnx2, custom_onnx2.Layers(50).Name, 'out')
 % Assemble the customized ONNX model
 custom_onnx_unet113 = assembleNetwork(custom_onnx2)
 
+% Plot the final customized ONNX model 
+figure()
+plot(custom_onnx_unet113)
+
+% Save the final customized ONNX model
+save('../external_process/2019_DAGNetworks/custom_onnx_unet113.mat', "custom_onnx_unet113");
+
 
 
 

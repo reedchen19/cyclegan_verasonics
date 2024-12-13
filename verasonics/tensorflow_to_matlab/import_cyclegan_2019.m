@@ -1,4 +1,3 @@
-clear
 % Import the ONNX model
 onnx_layers = importONNXLayers('cyclegan.onnx', 'ImportWeights', 1);
 
@@ -40,4 +39,8 @@ custom_onnx = connectLayers(custom_onnx, custom_onnx.Layers(50).Name, 'out')
 custom_onnx_cyclegan = assembleNetwork(custom_onnx)
 
 % Plot the final customized ONNX model
+figure()
 plot(custom_onnx_cyclegan)
+
+% Save the final customized ONNX model
+save('../external_process/2019_DAGNetworks/custom_onnx_cyclegan.mat', "custom_onnx_cyclegan");

@@ -1,11 +1,11 @@
 % load models and test image
-load('custom_onnx_unet113.mat');
+load('2024b_DAGNetworks/custom_onnx_unet113.mat');
 stage1 = custom_onnx_unet113;
 
-load('custom_onnx_cyclegan.mat');
+load('2024b_DAGNetworks/custom_onnx_cyclegan.mat');
 stage2 = custom_onnx_cyclegan;
 
-load('combined_model.mat');
+load('2024b_DAGNetworks/combined_model.mat');
 combined = combined_model;
 
 load("test_input_img.mat");
@@ -17,6 +17,14 @@ stage2_output = predict(stage2, stage1_output, 'Acceleration','auto');
 combined_output = predict(combined, bmode, 'Acceleration','auto');
 
 % plot outputs
+figure()
+imagesc(bmode);
+colorbar()
+caxis([-1 1])
+colormap('gray')
+axis image
+title('Input')
+
 figure()
 imagesc(stage1_output);
 colorbar()
