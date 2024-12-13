@@ -1,11 +1,11 @@
 % load models and test image
-load('2024b_DAGNetworks/custom_onnx_unet113.mat');
+load('verasonics/external_process/2024b_DAGNetworks/custom_onnx_unet113.mat');
 stage1 = custom_onnx_unet113;
 
-load('2024b_DAGNetworks/custom_onnx_cyclegan.mat');
+load('verasonics/external_process/2024b_DAGNetworks/custom_onnx_cyclegan.mat');
 stage2 = custom_onnx_cyclegan;
 
-load('2024b_DAGNetworks/combined_model.mat');
+load('verasonics/external_process/2024b_DAGNetworks/combined_model.mat');
 combined = combined_model;
 
 load("test_input_img.mat");
