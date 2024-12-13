@@ -91,4 +91,4 @@ plot(combined_lg)
 combined_model = assembleNetwork(combined_lg);
 
 % Save the final customized ONNX model
-save('../external_process/2024b_DAGNetworks/combined_model.mat', "combined_model");
+save('verasonics/external_process/2024b_DAGNetworks/combined_model.mat', "combined_model");

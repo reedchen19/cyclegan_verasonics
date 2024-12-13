@@ -36,7 +36,7 @@ figure()
 plot(custom_onnx_unet113)
 
 % Save the final customized ONNX model
-save('../external_process/2019_DAGNetworks/custom_onnx_unet113.mat', "custom_onnx_unet113");
+save('verasonics/external_process/2019_DAGNetworks/custom_onnx_unet113.mat', "custom_onnx_unet113");
 
 
 

@@ -43,4 +43,4 @@ figure()
 plot(custom_onnx_cyclegan)
 
 % Save the final customized ONNX model
-save('../external_process/2019_DAGNetworks/custom_onnx_cyclegan.mat', "custom_onnx_cyclegan");
+save('verasonics/external_process/2019_DAGNetworks/custom_onnx_cyclegan.mat', "custom_onnx_cyclegan");
