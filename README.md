@@ -1,6 +1,6 @@
 # CycleGAN Verasonics
 
-This repository contains the code for the paper **"Emulating Clinical Quality Muscle B-mode Ultrasound Images from Plane-Wave Images Using a Two-Stage Machine Learning Model"**. The code covers model training in Python and Verasonics implementation in MATLAB.
+This repository contains the code for the paper [**"Emulating Clinical Quality Muscle B-mode Ultrasound Images from Plane-Wave Images Using a Two-Stage Machine Learning Model"**](https://doi.org/10.48550/arXiv.2412.05758). The code covers model training in Python and Verasonics implementation in MATLAB.
 
 ![plane wave image processing with ML](figure7.png)
 
@@ -16,7 +16,7 @@ This repository contains the code for the paper **"Emulating Clinical Quality Mu
 
 ### Verasonics Implementation
 
-To implement the models on the Verasonics Vantage system, which uses a MATLAB interface, models trained in **Python 3.7** with **TensorFlow 2.9.1** were imported into **MATLAB R2019a** with the **Deep Learning Toolbox** and **Deep Learning Toolbox Converter for ONNX Model Format**. Due to compatibility and import challenges, several steps were taken:
+To implement the models on the Verasonics Vantage system, which uses a MATLAB interface, models trained in **Python 3.7** with **TensorFlow 2.9.1** were imported into **MATLAB R2019a/R2019b/R2024b** with the **Deep Learning Toolbox** and **Deep Learning Toolbox Converter for ONNX Model Format**. Due to compatibility and import challenges, several steps were taken:
 
 1. **Model Format Conversion**:
    - **MATLAB R2019a** includes the `importKerasLayers` method for importing Keras HDF5 models. However, the method did not support several TensorFlow layers.
@@ -35,17 +35,17 @@ To implement the models on the Verasonics Vantage system, which uses a MATLAB in
      - **Stage 1**: A network for the first stage only,
      - **Stage 2**: A network for the second stage only,
      - **Combined**: A two-stage network connecting the output of stage 1 to the input of stage 2.
-   - Matlab code used to import the ONNX models into MATLAB and assemble the DAGNetworks are located at:
-     - `verasonics/tensorflow_to_matlab/import_unet.m`
-     - `verasonics/tensorflow_to_matlab/import_cyclegan.m`
-     - `verasonics/tensorflow_to_matlab/make_combined_model.m`
+   - MATLAB code (for both R2019 and R2024b) used to import the ONNX models into MATLAB and assemble the DAGNetworks are located at:
+     - `verasonics/tensorflow_to_matlab/import_unet_20xx.m`
+     - `verasonics/tensorflow_to_matlab/import_cyclegan_20xx.m`
+     - `verasonics/tensorflow_to_matlab/make_combined_model_20xx.m`
    - The corresponding DAGNetworks are saved at:
-     - `verasonics/external_process/custom_onnx_unet113.mat`
-     - `verasonics/external_process/custom_onnx_cyclegan.mat`
-     - `verasonics/external_process/combined_model.mat`
+     - `verasonics/external_process/20xx_DAGNetworks/custom_onnx_unet113.mat`
+     - `verasonics/external_process/20xx_DAGNetworks/custom_onnx_cyclegan.mat`
+     - `verasonics/external_process/20xx_DAGNetworks/combined_model.mat`
    - `verasonics/external_process/test_DAGNetwork.m` can be used to load and test the saved DAGNetworks.
 
-> **Note**: This code was successfully tested on MATLAB R2019a and R2019b. The code fails on MATLAB R2020b and later due to changes to the Deep Learning Toolbox. Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a.
+> **Note**: This code was successfully tested on MATLAB R2019a, R2019b, and R2024b. Version-specific MATLAB files are designated with either `2019` (tested with R2019a and R2019b) or `2024b` (tested with R2024b) in the filename. The differences between the version-specific MATLAB files are due to changes to the Deep Learning Toolbox,  . Later MATLAB versions support a wider range of TensorFlow layers with `importTensorFlowNetwork` and `importTensorFlowLayers`, which may simplify some of these steps. However, the Verasonics Vantage system in this study supported only MATLAB R2019a, thus `importONNXLayers` was used instead.
 
 ---
 
