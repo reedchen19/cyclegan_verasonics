@@ -17,7 +17,7 @@ jobs:
       - name: Run import_unet_2024b
         uses: matlab-actions/run-command@v2
         with:
-          command: addpath("verasonics/tensorflow_to_matlab"), import_unet_2019
+          command: addpath("verasonics/tensorflow_to_matlab"), import_unet_2024b
       - name: Run import_cyclegan_2024b
         uses: matlab-actions/run-command@v2
         with:
